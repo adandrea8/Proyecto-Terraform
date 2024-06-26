@@ -1,0 +1,58 @@
+provider "aws" {
+  region                = var.region                       # Región de AWS
+}
+
+module "vpc" {
+  source                = "./modules/vpc"
+
+  vpc_cidr              = var.vpc_cidr                     # Direccion de Red
+  subnet_a_cidr         = var.subnet_a_cidr                # Subnet A
+  subnet_b_cidr         = var.subnet_b_cidr                # Subnet B
+  vpc_aws_az-a          = var.vpc_aws_az-a                 # Zona de disponibilidad A
+  vpc_aws_az-b          = var.vpc_aws_az-b                 # Zona de disponibilidad B
+  vpc_name              = var.vpc_name                     # Nombre del VPC
+  tag_subnet_a          = var.tag_subnet_a                 # Tag de la Subnet A
+  tag_subnet_b          = var.tag_subnet_b                 # Tag de la Subnet B
+  tag_igw               = var.tag_igw                      # Tag del Internet Gateway (IGW)
+  tag_rtable            = var.tag_rtable                   # Tag de la Route Table
+}
+
+resource "aws_instance" "instancia_public_a_1" {
+  ami                    = "ami-02aead0a55359d6ec"
+  instance_type          = "t2.micro"
+  key_name               = var.key_name
+  associate_public_ip_address = true
+  subnet_id     = module.vpc.id_subnet_a
+}
+
+resource "aws_instance" "instancia_public_a_2" {
+  ami                    = "ami-02aead0a55359d6ec"
+  instance_type          = "t2.micro"
+  key_name               = var.key_name
+  associate_public_ip_address = true
+  subnet_id     = module.vpc.id_subnet_a
+}
+
+resource "aws_instance" "instancia_public_b" {
+  ami                    = "ami-02aead0a55359d6ec"
+  instance_type          = "t2.micro"
+  key_name               = var.key_name
+  associate_public_ip_address = true
+  subnet_id     = module.vpc.id_subnet_b
+}
+
+resource "aws_instance" "instancia_private_a" {
+  ami                    = "ami-02aead0a55359d6ec"
+  instance_type          = "t2.micro"
+  key_name               = var.key_name
+  associate_public_ip_address = true
+  subnet_id     = module.vpc.id_subnet_a_private
+}
+
+resource "aws_instance" "instancia_private_b" {
+  ami                    = "ami-02aead0a55359d6ec"
+  instance_type          = "t2.micro"
+  key_name               = var.key_name
+  associate_public_ip_address = true
+  subnet_id     = module.vpc.id_subnet_b_private
+}
